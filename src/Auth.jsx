@@ -9,6 +9,7 @@ export const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [username, setUsername] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const { toast } = useToast()
@@ -26,8 +27,13 @@ export const Auth = () => {
       setError("Password must be at least 6 characters long")
       return false
     }
+    if (isSignUp && !username.trim()) {
+      setError("Please enter a username")
+      return false
+    }
     return true
   }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
@@ -37,9 +43,14 @@ export const Auth = () => {
     setLoading(true)
     try {
       if (isSignUp) {
-        const { error: signUpError } = await supabase.auth.signUp({
+        const { error: signUpError, data } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              username: username.trim(),
+            },
+          },
         })
         if (signUpError) throw signUpError
         toast({
@@ -82,6 +93,16 @@ export const Auth = () => {
             {error && (
               <div className="text-red-500 text-sm text-center">{error}</div>
             )}
+            {isSignUp && (
+              <Input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                disabled={loading}
+                required
+              />
+            )}
             <Input
               type="email"
               placeholder="Email"
@@ -109,6 +130,7 @@ export const Auth = () => {
               onClick={() => {
                 setIsSignUp(!isSignUp)
                 setError("")
+                setUsername("")
               }}
               className="text-sm cursor-pointer"
               disabled={loading}

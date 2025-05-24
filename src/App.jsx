@@ -9,7 +9,6 @@ function App() {
 
   const fetchSession = async () => {
     const currentSession = await supabase.auth.getSession();
-    console.log(currentSession);
     setSession(currentSession.data.session);
   };
 
@@ -31,6 +30,8 @@ function App() {
     await supabase.auth.signOut();
   };
 
+  const displayName = session?.user?.user_metadata?.username || session?.user?.email?.split('@')[0];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {session ? (
@@ -38,11 +39,11 @@ function App() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8 bg-white p-4 sm:p-6 rounded-xl shadow-md border border-gray-100">
             <div className="flex items-center gap-4 w-full sm:w-auto">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
-                {session.user.email?.charAt(0).toUpperCase()}
+                {displayName?.charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 sm:flex-none">
                 <h2 className="font-bold text-gray-800 text-lg truncate">
-                  {session.user.email?.split('@')[0]}
+                  {displayName}
                 </h2>
                 <p className="text-sm text-gray-500 flex items-center gap-1 truncate">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">

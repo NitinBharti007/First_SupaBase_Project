@@ -63,7 +63,6 @@ function TaskManager({ session }) {
       })
 
     return () => {
-      console.log("Cleaning up subscription")
       channel.unsubscribe()
     }
   }, [session?.user?.email])
