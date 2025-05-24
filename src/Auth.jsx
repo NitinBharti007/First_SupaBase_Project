@@ -3,7 +3,7 @@ import supabase from "./SupaBaseClient"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { toast } from "sonner"
+import { useToast } from "@/components/ui/use-toast"
 
 export const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false)
@@ -11,6 +11,7 @@ export const Auth = () => {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const { toast } = useToast()
 
   const validateForm = () => {
     if (!email || !password) {
@@ -42,18 +43,28 @@ export const Auth = () => {
           password,
         })
         if (signUpError) throw signUpError
-        toast.success("Sign up successful! Please check your email for verification.")
+        toast({
+          title: "Success",
+          description: "Sign up successful! Please check your email for verification.",
+        })
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
         })
         if (signInError) throw signInError
-        toast.success("Signed in successfully!")
+        toast({
+          title: "Success",
+          description: "Signed in successfully!",
+        })
       }
     } catch (error) {
       setError(error.message)
-      toast.error(error.message)
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      })
     } finally {
       setLoading(false)
     }
