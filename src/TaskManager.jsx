@@ -2,9 +2,11 @@ import { useState, useEffect } from "react"
 import supabase from "./SupaBaseClient"
 import { Input } from "./components/ui/input"
 import { Button } from "./components/ui/button"
-import { toast } from "sonner"
+import { useToast } from "./components/ui/use-toast"
+import { Toaster } from "./components/ui/toaster"
 
 function TaskManager({ session }) {
+  const { toast } = useToast()
   const [tasks, setTasks] = useState([])
   const [taskForm, setTaskForm] = useState({ title: "", description: "" })
   const [taskImage, setTaskImage] = useState(null)
@@ -79,7 +81,11 @@ function TaskManager({ session }) {
       setTasks(data || [])
     } catch (error) {
       console.error("Error fetching tasks:", error)
-      toast.error("Failed to fetch tasks")
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to fetch tasks"
+      })
     } finally {
       setLoading(false)
     }
@@ -101,7 +107,11 @@ function TaskManager({ session }) {
       return data.publicUrl
     } catch (error) {
       console.error("Error uploading image:", error)
-      toast.error("Image upload failed")
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Image upload failed"
+      })
       return null
     }
   }
@@ -127,7 +137,11 @@ function TaskManager({ session }) {
   const handleAddOrUpdateTask = async (e) => {
     e.preventDefault()
     if (!session?.user?.email) {
-      toast.error("You must be logged in to add tasks")
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "You must be logged in to add tasks"
+      })
       return
     }
 
@@ -159,7 +173,10 @@ function TaskManager({ session }) {
           .eq("email", session.user.email)
 
         if (error) throw error
-        toast.success("Task updated successfully")
+        toast({
+          title: "Success",
+          description: "Task updated successfully"
+        })
         setIsEditing(false)
         setEditingId(null)
         setExistingImageUrl(null)
@@ -171,7 +188,10 @@ function TaskManager({ session }) {
           .insert(taskData)
 
         if (error) throw error
-        toast.success("Task added successfully")
+        toast({
+          title: "Success",
+          description: "Task added successfully"
+        })
       }
 
       setTaskForm({ title: "", description: "" })
@@ -184,7 +204,11 @@ function TaskManager({ session }) {
       }
     } catch (error) {
       console.error("Error in handleAddOrUpdateTask:", error)
-      toast.error(error.message || "Failed to add/update task")
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to add/update task"
+      })
     } finally {
       setIsSubmitting(false)
     }
@@ -208,12 +232,19 @@ function TaskManager({ session }) {
       }
 
       console.log("Delete successful")
-      toast.success("Task deleted successfully")
+      toast({
+        title: "Success",
+        description: "Task deleted successfully"
+      })
       
       setTasks(prevTasks => prevTasks.filter(task => task.id !== id))
     } catch (error) {
       console.error("Error in delete operation:", error)
-      toast.error(error.message || "Failed to delete task")
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to delete task"
+      })
       fetchTasks()
     } finally {
       setLoading(false)
@@ -397,6 +428,7 @@ function TaskManager({ session }) {
           </div>
         )}
       </div>
+      <Toaster />
     </div>
   )
 }
