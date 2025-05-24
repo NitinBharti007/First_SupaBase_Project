@@ -28,7 +28,6 @@ export const Auth = () => {
     }
     return true
   }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
