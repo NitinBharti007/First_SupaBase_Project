@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Auth } from "./Auth";
 import TaskManager from "./TaskManager";
 import supabase from "./SupaBaseClient";
+import { Toaster } from "@/components/ui/toaster";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -64,6 +65,7 @@ function App() {
       ) : (
         <Auth />
       )}
+      <Toaster />
     </div>
   );
 }
